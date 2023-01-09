@@ -1,93 +1,120 @@
-import React, { useState} from 'react'
-import ToDoItem from '../todoitem'
-import './index.css'
+import React from 'react'
+import { useState, useEffect } from 'react'
+import ToDoList from '../todoList'
 
 function ToDo() {
     const [input, setInput] = useState('')
-
-    const [check, setCheck] = useState(false)
-
     const [data, setData] = useState([])
+    const [checkedAll, setCheckedAll] = useState(false)
+
+    useEffect(() => {
+        if (data.every(item => item.complete == true) && data.length != 0) {
+            setCheckedAll(true)
+        } else {
+            setCheckedAll(false)
+        }
+    })
+
+    function toggleEditSave(id, inputEdit) {
+        setData(
+            data.map(item => {
+                if (item.id == id) {
+                    console.log(item.edit)
+                    return {
+                        ...item,
+                        task: inputEdit,
+                        edit: !item.edit
+                    }
+                } else return item
+            })
+        )
+    }
+
+    function handleChange(e) {
+        setInput(e.target.value)
+    }
+
+    function removeToDo(id) {
+
+        setData(data.filter(item => item.id !== id))
+    }
 
 
-function handleAll(){
-    setCheck(!check)
-    
-    handleAllCheckbox()
-}
+    function checkChecked(id) {
+        data.forEach(item => {
+            if (item.id == id && item.complete == true) {
+                removeToDo(id)
+            }
+        })
 
-    function handleAllCheckbox() {
-      
-        console.log("data1", data)
-        if (check) {
-            setData(data.map((item) => Object.assign({}, item, { checked: true })))
-           
+    }
+
+    function deleteAll() {
+        setData([])
+    }
+
+    function toggleAllChecked() {
+        if (checkedAll) {
+            setData(data.map(item => {
+                return {
+                    ...item,
+                    complete: false,
+                }
+            }))
         }
         else {
-            setData(data.map((item) => Object.assign({}, item, { checked: false })))
-            
-        }
-      
-    }
-
-    function handleCheckbox(id) {
-        data.map((item) => {
-            if (item.id == id) {
-
-                item.checked = !item.checked
-            }
-        })
-        console.log(data)
-    }
-
-    function handleDelete(id) {
-        data.map((item) => {
-            if (item.id == id) {
-                if (item.checked == true) {
-                    setData(data.filter((item) => item.id != id))
-                    console.log(data)
+            setData(data.map(item => {
+                return {
+                    ...item,
+                    complete: true,
                 }
-            }
-        })
-
-    }
-
-
-    function handlerButtonAdd(e) {
-        e.preventDefault()
-        const todo = {
-            id: new Date().getTime(),
-            task: input,
-            checked: false,
+            }))
         }
-        setData([...data].concat(todo))
-        setInput("")
+        setCheckedAll(!checkedAll)
 
     }
 
 
-    return (<>
+    function toggleToDo(id) {
+        setData(data.map(item => {
+            if (item.id !== id) {
+                return item;
+            }
+            return {
+                ...item,
+                complete: !item.complete
+            }
+        }))
+    }
 
-        <form className='form'>
 
-            <input type="text" value={input} onChange={(e) => setInput(e.target.value)} className={input} />
-            <button className='button_add' onClick={(e) => handlerButtonAdd(e)}>Add ToDo</button>
+    function addToDo() {
+        if (input) {
+            setData([...data, {
+                id: Date.now(),
+                task: input,
+                complete: false,
+                edit: true,
+            }])
+            setInput('')
+        }
 
+    }
 
-        </form>
-        <ul>
-            {data.map((item) => {
+    return (
+        <>
+            <div>
+                <input value={input} onChange={(e) => handleChange(e)} />
+                <button onClick={addToDo}>Add ToDo</button>
+            </div>
+            <ToDoList item={data} removeToDo={checkChecked} toggleToDo={toggleToDo} toggleEditSave={toggleEditSave} />
+            {data.length ? <div>   You have a {data.length} tasks ---  Check All
+                <input type='checkbox' checked={checkedAll} onChange={toggleAllChecked} />
 
-                return <ToDoItem key={item.id} item={item} handleDelete={handleDelete} handleCheckbox={handleCheckbox} />
-            })}
+            </div> : <div>Write your first task</div>}
+            {checkedAll ? <button onClick={deleteAll}>Delete All</button> : ''}
 
-        </ul>
-        <div>
-            Check all
-            <input type='checkbox' onChange={() => handleAll()} />
-        </div>
-
-    </>
+        </>
     )
 }
 

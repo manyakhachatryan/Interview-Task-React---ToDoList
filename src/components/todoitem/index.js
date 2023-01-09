@@ -1,21 +1,26 @@
 import React from 'react'
-import './index.css'
-function ToDoItem({item, handleDelete,handleCheckbox }){
- 
+import { useState } from 'react'
 
+function ToDoItem(props) {
+    const { id, task, complete, removeToDo, toggleToDo, edit, toggleEditSave } = props
+    console.log(edit)
+    const [inputEdit, setInputEdit] = useState(task)
 
-    return(
-        <div className='task'>
+    function handleEdit(e) {
+        setInputEdit(e.target.value)
+    }
 
-    
-      
-        <input type = 'checkbox' onChange={()=>handleCheckbox(item.id)}/>
-        <p>  {item.task}</p>
-        <button onClick={()=>handleDelete(item.id)}>Delete</button>
-    
-
-
-  </div>
+    return (
+        <>
+            {edit ? <div>
+                <input type='checkbox' checked={complete} onChange={() => toggleToDo(id)} />
+                {task}
+                <button onClick={() => toggleEditSave(id)}> Edit</button>
+                <button onClick={() => removeToDo(id)}>x</button>
+            </div> : <div>
+                <input value={inputEdit} onChange={(e) => { handleEdit(e) }} /> <button onClick={() => toggleEditSave(id, inputEdit)}>Save</button>
+            </div>}
+        </>
     )
 }
 
