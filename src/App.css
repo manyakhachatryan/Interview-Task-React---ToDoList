@@ -1,4 +1,11 @@
 .App {
+  display:flex;
+  flex-wrap: wrap;
+  justify-content: center;
   text-align: center;
+ 
 }
 
+.textTitle{
+  text-align: center;
+}

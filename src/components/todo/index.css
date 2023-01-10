@@ -1,3 +1,11 @@
-.form{
-    color: blue;
+.container{
+    width: 500px;
+    height : 90vh;
+    text-align: center;
+    background-color: rgb(225, 221, 221);
+    
+}
+
+.input_part{
+    margin: 20px 40px 20px;
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import ToDoList from '../todoList'
-
+import './index.css'
 function ToDo() {
     const [input, setInput] = useState('')
     const [data, setData] = useState([])
@@ -13,7 +13,7 @@ function ToDo() {
         } else {
             setCheckedAll(false)
         }
-    })
+    }, [data])
 
     function toggleEditSave(id, inputEdit) {
         setData(
@@ -103,7 +103,8 @@ function ToDo() {
 
     return (
         <>
-            <div>
+        <div className='container'>
+            <div className='input_part'>
                 <input value={input} onChange={(e) => handleChange(e)} />
                 <button onClick={addToDo}>Add ToDo</button>
             </div>
@@ -113,7 +114,7 @@ function ToDo() {
 
             </div> : <div>Write your first task</div>}
             {checkedAll ? <button onClick={deleteAll}>Delete All</button> : ''}
-
+            </div>
         </>
     )
 }
